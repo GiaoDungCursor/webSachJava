@@ -68,11 +68,23 @@ public class CheckoutController {
             return "cart";
         }
 
-        Order order = orderService.createOrder(user, cart);
-        cart.forEach(item -> bookService.adjustStock(item.getBookId(), -item.getQuantity()));
-        cartService.clearCart(session);
+        try {
+            // Calculate total before clearing cart
+            java.math.BigDecimal totalAmount = cartService.cartTotal(session);
 
-        model.addAttribute("order", order);
-        return "confirmation";
+            Order order = orderService.createOrder(user, cart);
+            cart.forEach(item -> bookService.adjustStock(item.getBookId(), -item.getQuantity()));
+            cartService.clearCart(session);
+
+            model.addAttribute("order", order);
+            model.addAttribute("total", totalAmount);
+            return "confirmation";
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("error", "Lỗi thanh toán: " + e.getMessage());
+            model.addAttribute("items", cart);
+            model.addAttribute("total", cartService.cartTotal(session));
+            return "checkout";
+        }
     }
 }

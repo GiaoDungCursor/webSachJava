@@ -1,32 +1,67 @@
 package com.example.demo.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.math.BigDecimal;
-import java.util.Objects;
+import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "sach")
 public class Book {
 
-    private final String id;
+    @Id
+    @Column(name = "masach", nullable = false)
+    private String id;
+
+    @Column(name = "tensach")
     private String title;
-    private String author;
-    private String category;
-    private String description;
-    private BigDecimal price;
-    private int stock;
+
+    @Column(name = "soluong")
+    private Long stock;
+
+    @Column(name = "gia")
+    private Long price; // Assuming BigInt in DB maps to Long, or could be BigDecimal if needed, but
+                        // schema said bigint
+
+    @Column(name = "maloai")
+    private String categoryId;
+
+    @Column(name = "sotap")
+    private String volume;
+
+    @Column(name = "anh")
     private String coverUrl;
 
-    public Book(String id, String title, String author, String category, String description, BigDecimal price, int stock, String coverUrl) {
+    @Column(name = "NgayNhap")
+    private LocalDateTime importedDate;
+
+    @Column(name = "tacgia")
+    private String author;
+
+    public Book() {
+    }
+
+    public Book(String id, String title, Long stock, Long price, String categoryId, String volume, String coverUrl,
+            LocalDateTime importedDate, String author) {
         this.id = id;
         this.title = title;
-        this.author = author;
-        this.category = category;
-        this.description = description;
-        this.price = price;
         this.stock = stock;
+        this.price = price;
+        this.categoryId = categoryId;
+        this.volume = volume;
         this.coverUrl = coverUrl;
+        this.importedDate = importedDate;
+        this.author = author;
     }
 
     public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -37,44 +72,36 @@ public class Book {
         this.title = title;
     }
 
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public int getStock() {
+    public Long getStock() {
         return stock;
     }
 
-    public void setStock(int stock) {
+    public void setStock(Long stock) {
         this.stock = stock;
+    }
+
+    public Long getPrice() {
+        return price;
+    }
+
+    public void setPrice(Long price) {
+        this.price = price;
+    }
+
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public String getVolume() {
+        return volume;
+    }
+
+    public void setVolume(String volume) {
+        this.volume = volume;
     }
 
     public String getCoverUrl() {
@@ -85,16 +112,19 @@ public class Book {
         this.coverUrl = coverUrl;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Book)) return false;
-        Book book = (Book) o;
-        return Objects.equals(id, book.id);
+    public LocalDateTime getImportedDate() {
+        return importedDate;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
+    public void setImportedDate(LocalDateTime importedDate) {
+        this.importedDate = importedDate;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 }

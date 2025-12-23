@@ -1,94 +1,85 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8"/>
-    <title>Quản trị</title>
-    <link rel="stylesheet" href="<c:url value='/css/styles.css'/>"/>
-</head>
-<body>
-<jsp:include page="/WEB-INF/jsp/header.jsp"/>
+    <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+        <!DOCTYPE html>
+        <html>
 
-<div class="content">
-    <section class="admin-panel">
-        <h2>Thêm sách mới</h2>
-        <form action="<c:url value='/admin/books/add'/>" method="post">
-            <div><label>Tiêu đề</label><input type="text" name="title" required/></div>
-            <div><label>Tác giả</label><input type="text" name="author" required/></div>
-            <div><label>Danh mục</label><input type="text" name="category" required/></div>
-            <div><label>Giá</label><input type="number" name="price" step="0.01" required/></div>
-            <div><label>Tồn kho</label><input type="number" name="stock" min="0" required/></div>
-            <div><label>Mô tả</label><textarea name="description" rows="3"></textarea></div>
-            <button type="submit" class="primary">Thêm</button>
-        </form>
+        <head>
+            <meta charset="UTF-8" />
+            <title>Admin Dashboard</title>
+            <link rel="stylesheet" href="<c:url value='/css/styles.css'/>" />
+            <style>
+                .dashboard-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                    gap: 20px;
+                    margin-top: 30px;
+                }
 
-        <h2>Danh sách sách</h2>
-        <div class="book-grid">
-            <c:forEach var="book" items="${books}">
-                <div class="book-card">
-                    <img src="${book.coverUrl}" alt="${book.title}"/>
-                    <p><strong><c:out value="${book.title}"/></strong></p>
-                    <p><c:out value="${book.author}"/></p>
-                    <p><strong>Giá:</strong>
-                        <fmt:formatNumber value="${book.price}" minFractionDigits="2" maxFractionDigits="2"/>
-                        ₫
-                    </p>
-                    <p><strong>Tồn:</strong> <c:out value="${book.stock}"/></p>
+                .dashboard-card {
+                    background: #fff;
+                    padding: 30px;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                    text-align: center;
+                    transition: transform 0.2s;
+                    cursor: pointer;
+                    text-decoration: none;
+                    color: #333;
+                }
+
+                .dashboard-card:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+                }
+
+                .dashboard-card h3 {
+                    margin: 0;
+                    font-size: 1.5em;
+                }
+
+                .dashboard-card p {
+                    color: #7f8c8d;
+                    margin-top: 10px;
+                }
+
+                .icon {
+                    font-size: 3em;
+                    margin-bottom: 15px;
+                    display: block;
+                }
+            </style>
+        </head>
+
+        <body>
+            <jsp:include page="/WEB-INF/jsp/header.jsp" />
+
+            <div class="content">
+                <h1>Trang quản trị</h1>
+                <div class="dashboard-grid">
+                    <a href="<c:url value='/admin/books'/>" class="dashboard-card">
+                        <span class="icon">📚</span>
+                        <h3>Quản lý sách</h3>
+                        <p>Thêm, sửa, xóa sách trong kho.</p>
+                    </a>
+                    <a href="<c:url value='/admin/orders'/>" class="dashboard-card" style="border: 2px solid #2ecc71;">
+                        <span class="icon">🛒</span>
+                        <h3>Quản lý đơn hàng</h3>
+                        <p>Duyệt thanh toán hoặc hoàn tiền cho khách.</p>
+                    </a>
+                    <a href="<c:url value='/admin/categories'/>" class="dashboard-card">
+                        <span class="icon">🏷️</span>
+                        <h3>Quản lý loại sách</h3>
+                        <p>Thêm, sửa, xóa danh mục.</p>
+                    </a>
+                    <a href="<c:url value='/admin/stats'/>" class="dashboard-card">
+                        <span class="icon">📊</span>
+                        <h3>Thống kê doanh thu</h3>
+                        <p>Xem báo cáo doanh thu theo thời gian.</p>
+                    </a>
                 </div>
-            </c:forEach>
-        </div>
+            </div>
 
-        <h2>Đơn hàng</h2>
-        <table class="cart-table">
-            <thead>
-            <tr>
-                <th>Mã đơn</th>
-                <th>Người tạo</th>
-                <th>Tổng</th>
-                <th>Trạng thái</th>
-                <th>Thao tác</th>
-            </tr>
-            </thead>
-            <tbody>
-            <c:forEach var="order" items="${orders}">
-                <tr>
-                    <td><c:out value="${order.id}"/></td>
-                    <td><c:out value="${order.username}"/></td>
-                    <td>
-                        <fmt:formatNumber value="${order.total}" minFractionDigits="2" maxFractionDigits="2"/>
-                        ₫
-                    </td>
-                    <td>
-                        <c:set var="statusClass" value="${order.status == 'COMPLETED' ? 'completed' : 'pending'}"/>
-                        <span class="status-pill ${statusClass}">
-                            <c:out value="${order.status}"/>
-                        </span>
-                    </td>
-                    <td>
-                        <form action="<c:url value='/admin/orders/status'/>" method="post">
-                            <input type="hidden" name="orderId" value="${order.id}"/>
-                            <select name="status">
-                                <option value="PENDING" <c:if test="${order.status == 'PENDING'}">selected</c:if>>PENDING</option>
-                                <option value="COMPLETED" <c:if test="${order.status == 'COMPLETED'}">selected</c:if>>COMPLETED</option>
-                                <option value="CANCELLED" <c:if test="${order.status == 'CANCELLED'}">selected</c:if>>CANCELLED</option>
-                            </select>
-                            <button type="submit">Cập nhật</button>
-                        </form>
-                    </td>
-                </tr>
-            </c:forEach>
-            <c:if test="${empty orders}">
-                <tr>
-                    <td colspan="5">Chưa có đơn hàng.</td>
-                </tr>
-            </c:if>
-            </tbody>
-        </table>
-    </section>
-</div>
+            <jsp:include page="/WEB-INF/jsp/footer.jsp" />
+        </body>
 
-<jsp:include page="/WEB-INF/jsp/footer.jsp"/>
-</body>
-</html>
+        </html>

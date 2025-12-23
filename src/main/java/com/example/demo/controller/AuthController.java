@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.User;
 import com.example.demo.service.AuthService;
 import com.example.demo.service.CaptchaService;
 import org.springframework.stereotype.Controller;
@@ -35,8 +34,7 @@ public class AuthController {
             @RequestParam String username,
             @RequestParam String password,
             HttpSession session,
-            Model model
-    ) {
+            Model model) {
         return authService.authenticate(username, password)
                 .map(user -> {
                     session.setAttribute(SESSION_USER_KEY, user);
@@ -57,24 +55,43 @@ public class AuthController {
     @PostMapping("/register")
     public String register(
             @RequestParam String username,
+            @RequestParam(required = false) String fullName,
             @RequestParam String email,
+            @RequestParam(required = false) String address,
+            @RequestParam(required = false) String phoneNumber,
             @RequestParam String password,
             @RequestParam String captcha,
             HttpSession session,
-            Model model
-    ) {
+            Model model) {
+
+        // Handle defaults for backward compatibility/cached forms
+        if (fullName == null)
+            fullName = username;
+        if (address == null)
+            address = "Vietnam";
+        if (phoneNumber == null)
+            phoneNumber = "0900000000";
+
         if (!captchaService.validate(session, captcha)) {
             model.addAttribute("error", "Captcha không đúng.");
             model.addAttribute("captcha", captchaService.generate(session));
             return "register";
         }
 
-        boolean created = authService.register(username, email, password);
-        if (!created) {
-            model.addAttribute("error", "Tên người dùng đã tồn tại.");
+        try {
+            boolean created = authService.register(username, email, password, fullName, address, phoneNumber);
+            if (!created) {
+                model.addAttribute("error", "Tên người dùng đã tồn tại.");
+                model.addAttribute("captcha", captchaService.generate(session));
+                return "register";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("error", "Lỗi đăng ký: " + e.getMessage());
             model.addAttribute("captcha", captchaService.generate(session));
             return "register";
         }
+
         model.addAttribute("success", "Đăng ký thành công. Vui lòng đăng nhập.");
         return "login";
     }

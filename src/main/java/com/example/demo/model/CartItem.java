@@ -7,10 +7,10 @@ public class CartItem {
 
     private final String bookId;
     private final String title;
-    private final BigDecimal price;
+    private final Long price;
     private int quantity;
 
-    public CartItem(String bookId, String title, BigDecimal price, int quantity) {
+    public CartItem(String bookId, String title, Long price, int quantity) {
         this.bookId = bookId;
         this.title = title;
         this.price = price;
@@ -25,7 +25,7 @@ public class CartItem {
         return title;
     }
 
-    public BigDecimal getPrice() {
+    public Long getPrice() {
         return price;
     }
 
@@ -38,13 +38,15 @@ public class CartItem {
     }
 
     public BigDecimal getLineTotal() {
-        return price.multiply(BigDecimal.valueOf(quantity));
+        return BigDecimal.valueOf(price).multiply(BigDecimal.valueOf(quantity));
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CartItem)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof CartItem))
+            return false;
         CartItem cartItem = (CartItem) o;
         return bookId.equals(cartItem.bookId);
     }

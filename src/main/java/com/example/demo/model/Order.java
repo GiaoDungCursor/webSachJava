@@ -1,41 +1,51 @@
 package com.example.demo.model;
 
-import java.math.BigDecimal;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
+@Entity
+@Table(name = "hoadon")
 public class Order {
 
-    private final String id;
-    private final String username;
-    private final List<OrderItem> items;
-    private final BigDecimal total;
-    private String status;
-    private final LocalDateTime createdAt;
+    @Id
+    // @GeneratedValue(strategy = GenerationType.IDENTITY) // Removed for manual ID
+    @Column(name = "MaHoaDon", nullable = false)
+    private Long id;
 
-    public Order(String id, String username, List<OrderItem> items, BigDecimal total, String status, LocalDateTime createdAt) {
-        this.id = id;
-        this.username = username;
-        this.items = items;
-        this.total = total;
-        this.status = status;
-        this.createdAt = createdAt;
+    @Column(name = "makh")
+    private Long customerId;
+
+    @Column(name = "NgayMua")
+    private LocalDateTime orderDate;
+
+    @Column(name = "damua", length = 20)
+    private String status; // PENDING, APPROVED, REFUNDED
+
+    public Order() {
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public String getUsername() {
-        return username;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public List<OrderItem> getItems() {
-        return items;
+    public Long getCustomerId() {
+        return customerId;
     }
 
-    public BigDecimal getTotal() {
-        return total;
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
+    }
+
+    public LocalDateTime getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(LocalDateTime orderDate) {
+        this.orderDate = orderDate;
     }
 
     public String getStatus() {
@@ -44,9 +54,5 @@ public class Order {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
     }
 }

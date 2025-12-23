@@ -1,38 +1,57 @@
 package com.example.demo.model;
 
-import java.math.BigDecimal;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "ChiTietHoaDon")
 public class OrderItem {
 
-    private final String bookId;
-    private final String title;
-    private final BigDecimal price;
-    private final int quantity;
+    @Id
+    // @GeneratedValue(strategy = GenerationType.IDENTITY) // Removed for manual ID
+    @Column(name = "MaChiTietHD", nullable = false)
+    private Long id;
 
-    public OrderItem(String bookId, String title, BigDecimal price, int quantity) {
-        this.bookId = bookId;
-        this.title = title;
-        this.price = price;
-        this.quantity = quantity;
+    @Column(name = "MaSach")
+    private String bookId;
+
+    @Column(name = "SoLuongMua")
+    private Integer quantity;
+
+    @Column(name = "MaHoaDon")
+    private Long orderId;
+
+    public OrderItem() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getBookId() {
         return bookId;
     }
 
-    public String getTitle() {
-        return title;
+    public void setBookId(String bookId) {
+        this.bookId = bookId;
     }
 
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public BigDecimal lineTotal() {
-        return price.multiply(BigDecimal.valueOf(quantity));
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
     }
 }

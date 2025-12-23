@@ -30,7 +30,8 @@ public class CartService {
         }
         List<CartItem> cart = getCart(session);
         synchronized (cart) {
-            CartItem existing = cart.stream().filter(item -> item.getBookId().equals(book.getId())).findFirst().orElse(null);
+            CartItem existing = cart.stream().filter(item -> item.getBookId().equals(book.getId())).findFirst()
+                    .orElse(null);
             if (existing == null) {
                 cart.add(new CartItem(book.getId(), book.getTitle(), book.getPrice(), quantity));
             } else {
